@@ -16,7 +16,7 @@ jobs:
           python-version: "3.11.1"
 
       - name: Install requirements
-        run: pip install -r pre-commit
+        run: pip install pre-commit
 
       - name: Run pre-commit hooks
         run: pre-commit run --all-files --show-diff-on-failure
