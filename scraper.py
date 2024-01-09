@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     for assign in assigns:
         logger.info(
-            "fetched assign",
+            msg="fetched assign",
             extra={
                 "title": assign.title,
                 "description": assign.description,
