@@ -15,6 +15,7 @@ class Dates:
 class Attachment:
     name: str
     url: HttpUrl
+    data: bytes
 
 
 @dataclass

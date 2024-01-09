@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from pydantic import AnyHttpUrl
 
-from models.assign import Assign
+from models.assign import Assign, Attachment
 from parsers.assign import AssignParser
 
 
@@ -42,6 +42,24 @@ class MoodleHandler:
     def _get_assign_page(self, assign_page_url: AnyHttpUrl) -> BeautifulSoup:
         return self._fetch_page(assign_page_url)
 
+    def _get_attachments(self, assign_page: BeautifulSoup) -> list[Attachment]:
+        attachments = []
+        if attachments_section := assign_page.find(
+            name="div",
+            class_="fileuploadsubmission",
+        ):
+            for attachment in attachments_section.find_all("a", {"target": "_blank"}):
+                url = attachment["href"]
+                attachments.append(
+                    Attachment(
+                        url=url,
+                        name=attachment.text.strip(),
+                        data=self.session.get(url).content,
+                    )
+                )
+
+        return attachments
+
     def get_assigns(self) -> list[Assign]:
         calendar_page = self._get_calendar_page()
         calendar_events = calendar_page.find_all("div", class_="event")
@@ -49,6 +67,10 @@ class MoodleHandler:
             assign_elem = event_div.find("div", class_="card-footer").find("a")
             assign_url = assign_elem["href"]
             assign_page = self._get_assign_page(assign_url)
-            yield AssignParser.parse(page=assign_page, url=assign_url)
-
+            attachments = self._get_attachments(assign_page)
+            yield AssignParser.parse(
+                page=assign_page,
+                attachments=attachments,
+                url=assign_url,
+            )
 

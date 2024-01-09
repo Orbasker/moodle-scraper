@@ -64,6 +64,12 @@ if __name__ == "__main__":
                     "due": assign.dates.due,
                 },
                 "url": assign.url,
-                "attachments": {attachment.name: attachment.url for attachment in assign.attachments},
+                "attachments": {
+                    attachment.name: {
+                        "url": attachment.url,
+                        "data": attachment.data,
+                    }
+                    for attachment in assign.attachments
+                },
             },
         )

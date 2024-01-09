@@ -1,17 +1,21 @@
 import dateparser
 from bs4 import BeautifulSoup
 from pydantic import AnyHttpUrl, HttpUrl
-
 from models.assign import Assign, Attachment, Dates
 
 
 class AssignParser:
     @classmethod
-    def parse(cls, page: BeautifulSoup, url: AnyHttpUrl) -> Assign:
+    def parse(
+        cls,
+        page: BeautifulSoup,
+        attachments: list[Attachment],
+        url: AnyHttpUrl,
+    ) -> Assign:
         return Assign(
             title=cls._get_name(page),
             description=cls._get_description(page),
-            attachments=cls._get_attachments(page),
+            attachments=attachments,
             dates=cls._get_dates(page),
             url=url,
         )
@@ -36,19 +40,3 @@ class AssignParser:
             dates.append(dateparser.parse(date_str) if date_str else None)
 
         return Dates(*dates)
-
-    @classmethod
-    def _get_attachments(cls, page: BeautifulSoup) -> list[HttpUrl]:
-        attachments = []
-        if attachments_section := page.find(
-            name="div",
-            class_="fileuploadsubmission",
-        ):
-            attachments.extend(
-                Attachment(
-                    url=attachment["href"],
-                    name=attachment.text.strip(),
-                )
-                for attachment in attachments_section.find_all("a", {"target": "_blank"})
-            )
-        return attachments
