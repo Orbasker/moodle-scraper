@@ -3,7 +3,7 @@ from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
-from pydantic import AnyHttpUrl
+from pydantic.v1 import AnyHttpUrl
 
 from models.assign import Assign, Attachment
 from parsers.assign import AssignParser
@@ -16,7 +16,7 @@ class MoodleHandler:
         self.session = requests.Session()
         login_url = urljoin(self.baseurl, "login/index.php")
         login_data = {"username": self.username, "password": self.password}
-        self.session.post(login_url, data=login_data)
+        self.session.post(url=login_url, data=login_data)
 
     def __init__(
         self,
