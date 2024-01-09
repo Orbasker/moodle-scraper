@@ -1,11 +1,12 @@
 import logging
 import logging.config
 import os
-from handlers.monday import MondayHandler
+
 from dotenv import load_dotenv
-from pydantic.v1 import AnyHttpUrl
+from pydantic import AnyHttpUrl
 from pythonjsonlogger import jsonlogger
 
+from handlers.monday import MondayHandler
 from handlers.moodle import MoodleHandler
 
 
@@ -30,13 +31,12 @@ if __name__ == "__main__":
     password = config["MOODLE_PASSWORD"]
     base_url = config["MOODLE_BASEURL"]
     monday_token = config["MONDAY_API_KEY"]
-    monday = MondayHandler(monday_token)
-    boards = monday.get_boards()
-    board = boards.fetch_boards()
-    board_id = 5818273381
-    items = boards.fetch_items_by_board_id(board_id)
-
+    board_id = config["MONDAY_BOARD_ID"]
     logger = get_logger()
+
+    monday = MondayHandler(token=monday_token, logger=logger)
+    boards = monday.get_boards()
+    items = boards.fetch_items_by_board_id(board_id)
 
     mh = MoodleHandler(
         username=username,
