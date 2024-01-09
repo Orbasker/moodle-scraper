@@ -1,18 +1,30 @@
 import logging
 import logging.config
 import os
-
+from models.column_names import ColumnNames, Dates
 from dotenv import load_dotenv
-from pydantic import AnyHttpUrl
+from pydantic.v1 import AnyHttpUrl
 from pythonjsonlogger import jsonlogger
 
 from handlers.monday import MondayBoardHandler
 from handlers.moodle import MoodleHandler
 
 
-def get_config():
+def get_config() -> dict:
     load_dotenv()
-    return os.environ
+    return os.environ.copy()
+
+
+def get_column_names(conf:dict) -> ColumnNames:
+    return ColumnNames(
+        description=conf["MONDAY_COLUMN_NAME_DESCRIPTION"],
+        dates=Dates(
+            start=conf["MONDAY_COLUMN_NAME_START_DATE"],
+            due=conf["MONDAY_COLUMN_NAME_DUE_DATE"],
+        ),
+        url=conf["MONDAY_COLUMN_NAME_URL"],
+        attachments=conf["MONDAY_COLUMN_NAME_ATTACHMENTS"]
+    )
 
 
 def get_logger() -> logging.Logger:
@@ -34,7 +46,11 @@ if __name__ == "__main__":
     board_id = config["MONDAY_BOARD_ID"]
     logger = get_logger()
 
-    mbh = MondayBoardHandler(token=monday_token, logger=logger,board_id= int(board_id),)
+    mbh = MondayBoardHandler(
+        token=monday_token,
+        logger=logger,
+        board_id=int(board_id),
+    )
 
     items = mbh.fetch_items()
 
@@ -49,16 +65,15 @@ if __name__ == "__main__":
 
     for assign in assigns:
         item_id = mbh.add_item(
-            board_id=board_id,
-            item=assign,
-            moodle=mh,
+            assign=assign,
+            column_names=get_column_names(conf=config),
+
         )
 
         logger.info(
             msg="fetched assign",
             extra={
                 "title": assign.title,
-                "description": assign.description,
                 "dates": {
                     "start": assign.dates.start,
                     "due": assign.dates.due,
@@ -67,7 +82,7 @@ if __name__ == "__main__":
                 "attachments": {
                     attachment.name: {
                         "url": attachment.url,
-                        "data": attachment.data,
+
                     }
                     for attachment in assign.attachments
                 },

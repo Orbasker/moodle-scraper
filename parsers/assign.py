@@ -1,6 +1,7 @@
 import dateparser
 from bs4 import BeautifulSoup
-from pydantic import AnyHttpUrl, HttpUrl
+from pydantic import AnyHttpUrl
+
 from models.assign import Assign, Attachment, Dates
 
 
