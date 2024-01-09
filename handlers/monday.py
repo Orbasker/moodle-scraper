@@ -1,9 +1,10 @@
 import os
 from logging import Logger
-from models.column_names import ColumnNames
+
 from monday import MondayClient
 
 from models.assign import Assign, Attachment
+from models.column_names import ColumnNames
 
 
 class MondayBoardHandler:

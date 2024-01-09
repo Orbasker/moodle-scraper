@@ -1,13 +1,14 @@
 import logging
 import logging.config
 import os
-from models.column_names import ColumnNames, Dates
+
 from dotenv import load_dotenv
 from pydantic.v1 import AnyHttpUrl
 from pythonjsonlogger import jsonlogger
 
 from handlers.monday import MondayBoardHandler
 from handlers.moodle import MoodleHandler
+from models.column_names import ColumnNames, Dates
 
 
 def get_config() -> dict:
@@ -15,7 +16,7 @@ def get_config() -> dict:
     return os.environ.copy()
 
 
-def get_column_names(conf:dict) -> ColumnNames:
+def get_column_names(conf: dict) -> ColumnNames:
     return ColumnNames(
         description=conf["MONDAY_COLUMN_NAME_DESCRIPTION"],
         dates=Dates(
@@ -23,7 +24,7 @@ def get_column_names(conf:dict) -> ColumnNames:
             due=conf["MONDAY_COLUMN_NAME_DUE_DATE"],
         ),
         url=conf["MONDAY_COLUMN_NAME_URL"],
-        attachments=conf["MONDAY_COLUMN_NAME_ATTACHMENTS"]
+        attachments=conf["MONDAY_COLUMN_NAME_ATTACHMENTS"],
     )
 
 
@@ -67,7 +68,6 @@ if __name__ == "__main__":
         item_id = mbh.add_item(
             assign=assign,
             column_names=get_column_names(conf=config),
-
         )
 
         logger.info(
@@ -82,7 +82,6 @@ if __name__ == "__main__":
                 "attachments": {
                     attachment.name: {
                         "url": attachment.url,
-
                     }
                     for attachment in assign.attachments
                 },
