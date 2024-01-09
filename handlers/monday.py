@@ -1,22 +1,24 @@
 import os
 
 from monday import MondayClient
-
+from logging import Logger
 from handlers.moodle import MoodleHandler
 
 
-class MondayHandler:
-    def __init__(self, token, logger=None):
+class MondayBoardHandler:
+    def __init__(self, token: str, board_id: int, logger: Logger):
         self.client = MondayClient(token)
+        self.board_id = board_id
         self.logger = logger
+        self.items = {}
 
-    def get_boards(self):
-        return self.client.boards
+    def fetch_items(self, check_cache: bool = True) -> dict:
+        if check_cache and self.items:
+            return self.items
+        self.items = self.client.boards.fetch_items_by_board_id(self.board_id)
+        return self.items
 
-    def get_board(self, board_id):
-        return self.client.boards.get_board(board_id)
-
-    def add_item(self, board_id, item, moodle: MoodleHandler):
+    def add_item(self, board_id: int, item, moodle: MoodleHandler):
         item_name = item.title
         given_date = item.dates.start.strftime("%Y-%m-%d")
         due_date = item.dates.due.strftime("%Y-%m-%d")

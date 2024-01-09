@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from pydantic import AnyHttpUrl
 from pythonjsonlogger import jsonlogger
 
-from handlers.monday import MondayHandler
+from handlers.monday import MondayBoardHandler
 from handlers.moodle import MoodleHandler
 
 
@@ -34,9 +34,9 @@ if __name__ == "__main__":
     board_id = config["MONDAY_BOARD_ID"]
     logger = get_logger()
 
-    monday = MondayHandler(token=monday_token, logger=logger)
-    boards = monday.get_boards()
-    items = boards.fetch_items_by_board_id(board_id)
+    mbh = MondayBoardHandler(token=monday_token, logger=logger,board_id= int(board_id),)
+
+    items = mbh.fetch_items()
 
     mh = MoodleHandler(
         username=username,
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     assigns = mh.get_assigns()
 
     for assign in assigns:
-        item_id = monday.add_item(
+        item_id = mbh.add_item(
             board_id=board_id,
             item=assign,
             moodle=mh,

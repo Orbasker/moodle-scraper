@@ -50,3 +50,5 @@ class MoodleHandler:
             assign_url = assign_elem["href"]
             assign_page = self._get_assign_page(assign_url)
             yield AssignParser.parse(page=assign_page, url=assign_url)
+
+
