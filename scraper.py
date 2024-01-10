@@ -69,21 +69,3 @@ if __name__ == "__main__":
             assign=assign,
             column_names=get_column_names(conf=config),
         )
-
-        logger.info(
-            msg="fetched assign",
-            extra={
-                "title": assign.title,
-                "dates": {
-                    "start": assign.dates.start,
-                    "due": assign.dates.due,
-                },
-                "url": assign.url,
-                "attachments": {
-                    attachment.name: {
-                        "url": attachment.url,
-                    }
-                    for attachment in assign.attachments
-                },
-            },
-        )
