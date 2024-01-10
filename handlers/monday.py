@@ -36,9 +36,9 @@ class MondayBoardHandler:
         for board in self.items["data"]["boards"]:
             for group in board["items"]:
                 for item in group["column_values"]:
-                    if item['id'] == column_names.url:
-                        url_column = json.loads(item['value'])
-                        if url_column['text'] == assign.title:
+                    if item["id"] == column_names.url:
+                        url_column = json.loads(item["value"])
+                        if url_column["text"] == assign.title:
                             self.logger.info("item already exists in board", extra={"title": assign.title})
                             return False
 
@@ -59,8 +59,12 @@ class MondayBoardHandler:
 
         column_values = {
             column_names.description: assign.description,
-            column_names.dates.start: {"date": assign.dates.start.strftime("%Y-%m-%d"),},
-            column_names.dates.due: {"date": assign.dates.due.strftime("%Y-%m-%d"),},
+            column_names.dates.start: {
+                "date": assign.dates.start.strftime("%Y-%m-%d"),
+            },
+            column_names.dates.due: {
+                "date": assign.dates.due.strftime("%Y-%m-%d"),
+            },
             column_names.url: {"text": assign.title, "url": assign.url},
         }
 
