@@ -25,6 +25,7 @@ def get_column_names(conf: dict) -> ColumnNames:
         ),
         url=conf["MONDAY_COLUMN_NAME_URL"],
         attachments=conf["MONDAY_COLUMN_NAME_ATTACHMENTS"],
+        course_name=conf["MONDAY_COLUMN_NAME_COURSE_NAME"],
     )
 
 
@@ -68,4 +69,5 @@ if __name__ == "__main__":
         item_id = mbh.add_item(
             assign=assign,
             column_names=get_column_names(conf=config),
+            # group_id="new_group29179"
         )

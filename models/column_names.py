@@ -13,3 +13,4 @@ class ColumnNames:
     dates: Dates
     url: str
     attachments: str
+    course_name: str

@@ -1,17 +1,17 @@
 import dateparser
 from bs4 import BeautifulSoup
 from pydantic import AnyHttpUrl
-
+import re
 from models.assign import Assign, Attachment, Dates
 
 
 class AssignParser:
     @classmethod
     def parse(
-        cls,
-        page: BeautifulSoup,
-        attachments: list[Attachment],
-        url: AnyHttpUrl,
+            cls,
+            page: BeautifulSoup,
+            attachments: list[Attachment],
+            url: AnyHttpUrl,
     ) -> Assign:
         return Assign(
             title=cls._get_name(page),
@@ -19,6 +19,7 @@ class AssignParser:
             attachments=attachments,
             dates=cls._get_dates(page),
             url=url,
+            course_name=cls._get_course_name(page),
         )
 
     @classmethod
@@ -41,3 +42,13 @@ class AssignParser:
             dates.append(dateparser.parse(date_str) if date_str else None)
 
         return Dates(*dates)
+
+    @classmethod
+    def _get_course_name(cls, page: BeautifulSoup) -> str:
+        title = page.find("title").text
+        match = re.match(r'^(.*?)(?=[:|])', title)
+        if match:
+            return match.group(1).strip()
+        else:
+            print("error regexing title")
+            return title

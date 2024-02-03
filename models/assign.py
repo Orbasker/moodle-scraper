@@ -25,3 +25,4 @@ class Assign:
     dates: Dates
     url: HttpUrl
     attachments: Optional[list[Attachment]]
+    course_name: str

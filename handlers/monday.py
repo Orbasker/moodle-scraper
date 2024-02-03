@@ -34,7 +34,7 @@ class MondayBoardHandler:
 
     def _should_add_item(self, assign: Assign, column_names: ColumnNames) -> bool:
         for board in self.items["data"]["boards"]:
-            for group in board["items"]:
+            for group in board['items_page']['items']:
                 for item in group["column_values"]:
                     if item["id"] == column_names.url:
                         url_column = json.loads(item["value"])
@@ -66,12 +66,14 @@ class MondayBoardHandler:
                 "date": assign.dates.due.strftime("%Y-%m-%d"),
             },
             column_names.url: {"text": assign.title, "url": assign.url},
+            column_names.course_name: assign.course_name,
         }
 
         item = self.client.items.create_item(
             board_id=self.board_id,
             group_id=group_id,
             item_name=assign.title,
+            create_labels_if_missing=True,
             column_values=column_values,
         )
 
